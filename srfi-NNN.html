@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+SPDX-FileCopyrightText: 2026 Wolfgang Corcoran-Mathe
+SPDX-License-Identifier: MIT
+-->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+    <title>SRFI ###: Cyclic ports</title>
+    <link href="/favicon.png" rel="icon" sizes="192x192" type="image/png">
+    <link rel="stylesheet" href="https://srfi.schemers.org/srfi.css" type="text/css">
+    <style>
+      <!--
+      div.proc-spec {
+          margin-top: 30px;
+          margin-bottom: 30px;
+      }
+      -->
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></head>
+  <body>
+    <h1><a href="https://srfi.schemers.org/"><img class="srfi-logo" src="https://srfi.schemers.org/srfi-logo.svg" alt="SRFI surfboard logo" /></a>###: Cyclic ports</h1>
+
+    <p>by Wolfgang Corcoran-Mathe</p>
+
+    <h2 id="status">Status</h2>
+
+    <p style="color: red;">For editor's use only.  Please do not edit this section.</p>
+
+    <p>??? the draft/final/withdrawn status of the SRFI, information on how
+    to subscribe to its mailing list, and important dates in its history.
+    The editor will add this section.</p>
+
+    <h2 id="abstract">Abstract</h2>
+
+    <p>Cyclic ports are like infinite string and bytevector input ports:
+      they produce the elements of a given sequence repeatedly, forever.
+      While their intended use is as reusable seeds for SRFI 271 random
+      ports, they are also useful whenever a repeating sequence of one
+      or more bytes or characters is needed.</p>
+
+    <h2 id="toc">Contents</h2>
+
+    <ol>
+      <li><a href="#rationale">Rationale</a></li>
+      <li>
+        <a href="#specification">Specification</a>
+        <ol type="a">
+          <li><a href="#procedures">Procedures</a></li>
+          <li><a href="#examples">Examples</a></li>
+        </ol>
+      </li>
+      <li><a href="#implementation">Implementation</a></li>
+      <li><a href="#acknowledgements">Acknowledgements</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#copyright">Copyright</a></li>
+    </ol>
+
+    <h2 id="issues">Issues</h2>
+
+    <p>None at present.</p>
+
+    <h2 id="rationale">Rationale</h2>
+
+    <p>The motivation for this SRFI was a feature missing from
+      <a href="#srfi-271">SRFI 271</a>:  the ability to create,
+      on different runs of a program
+      or test suite, a random port that produces the same sequence
+      each time.  While SRFI 271 allows the state of a random port
+      to be retrieved and stored, there is no guarantee that state
+      formats will be stable across libraries and versions.  A state
+      saved during one run might not be valid on another run (perhaps
+      on a different implementation).  SRFI 271 provides no solution
+      to this problem.</p>
+
+    <p>But a key requirement of SRFI 271, namely that random ports
+      initialized from identical sequences have the same initial
+      states, makes a solution possible in the form of cyclic ports.
+      The same sequence can be used to initialize several random
+      ports by passing each a cyclic port for that sequence.  Since
+      cyclic ports are (conceptually) infinite, there is no danger
+      of running out of “seed” data.  Thus a cyclic port can initialize
+      any random port, regardless of how much seed data that port’s
+      pseudorandom generation algorithm requires.
+
+    <p>Cyclic ports have other uses.  It is sometimes useful to have
+      an endless source of a specific byte or characters.  UNIX-like
+      systems traditionally provide a <code>/dev/zero</code> file
+      which produces an infinite stream of zeros.  This is
+      emulated portably by <code>(open-cyclic-input-bytevector
+      #u8(0))</code>.
+
+    <h3>Why not cyclic generators?</h3>
+
+    <p><a href="#srfi-158">SRFI 158</a> provides
+      <code>circular-generator</code>, which
+      constructs a simple infinite generator (nullary procedure)
+      from its arguments.  Although it cannot construct a cyclic
+      generator from a string or bytevector directly,
+      <code>circular-generator</code> provides a facility similar
+      to cyclic ports.  Unlike SRFI 158 generators, however, cyclic
+      ports have the virtue of being ordinary input ports, which
+      makes them suitable arguments to all of the standard port-reading
+      procedures.  The interface provided by this SRFI is also much
+      closer to the the well-known string and bytevector port
+      interfaces of R<sup>6</sup>RS and R<sup>7</sup>RS.</p>
+
+    <h2 id="specification">Specification</h2>
+
+    <p>The terms “must”, “may”, etc. should be interpreted according
+      to <a href="#rfc2119">RFC 2119</a>.  In this SRFI they are
+      written with <strong>strong emphasis</strong>.</p>
+
+    <p>The phrase “the behavior is undefined” is used in the sense
+      given it in the ISO C programming-language standards (see e.g.
+      <a href="#c23">C23</a> §3.5.3).  In cases of undefined behavior,
+      this SRFI imposes no requirements.  Possible behaviors include
+      signaling an error, handling the situation with an
+      implementation-defined extension, or failing
+      catastrophically.</p>
+
+    <h3 id="procedures">Procedures</h3>
+
+    <div class="proc-spec">
+      <p><code>(open-cyclic-input-string <var>string</var>)</code> →
+        textual-input-port</p>
+
+      <p>Returns a new textual input port that delivers characters
+        from <var>string</var> in order, repeatedly, forever.
+        More precisely, if <var>string</var> consists of the characters
+        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, then the
+        returned port <strong>shall</strong> produce the conceptually
+        infinite sequence
+        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>,
+        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, ….</p>
+
+      <p>Reading from the returned port <strong>must not</strong> produce
+        an EOF object.  If <var>string</var> is empty, then the behavior
+        is undefined.</p>
+    </div>
+
+    <div class="proc-spec">
+      <p><code>(open-cyclic-input-bytevector
+        <var>bytevector</var>)</code> → binary-input-port</p>
+
+      <p>Returns a new binary cyclic port that delivers bytes from
+        <var>bytevector</var> in order, repeatedly, forever.
+        More precisely, if <var>bytevector</var> consists of the
+        numbers <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
+        then the returned port <strong>shall</strong> produce the
+        conceptually infinite sequence
+        <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
+        <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>, ….</p>
+
+      <p>Reading from the returned port <strong>must not</strong> produce
+        an EOF object.  If <var>bytevector</var> is empty, then the
+        behavior is undefined.</p>
+    </div>
+
+    <h3 id="examples">Examples</h3>
+
+    <p><em>This section is informational.</em></p>
+
+    <pre><code>(let ((p (open-cyclic-input-bytevector #u8(1 2 3 4))))
+  (read-bytevector 6 p))
+⇒ #u8(1 2 3 4 1 2)
+
+(let ((p (open-cyclic-input-string "frob")))
+  (read-string 8 p))
+⇒ "frobfrob"</code></pre>
+
+    <h2 id="implementation">Implementation</h2>
+
+    <p>A sample implementation in portable R<sup>6</sup>RS Scheme is
+      available in the SRFI repository.</p>
+
+    <h2 id="acknowledgements">Acknowledgements</h2>
+
+    <p>Thanks to Peter McGoron, John Cowan, and Shiro Kawai for
+      suggesting the cyclic port concept.</p>
+
+    <p>Thanks to those who provided feedback via the SRFI mailing
+      list or on the #scheme IRC channel.</p>
+
+    <p>Of course, none of the above should be taken to suggest that any
+      of these people endorse the final draft of this SRFI.</p>
+
+    <h2 id="references">References</h2>
+
+    <p id="rfc2119">S. Bradner, <cite>Key words for use in RFCs to
+      Indicate Requirement Levels</cite> (RFC 2119), 1997.
+      <a href="https://datatracker.ietf.org/doc/html/rfc2119">
+        https://datatracker.ietf.org/doc/html/rfc2119</a></p>
+
+    <p id="r6rs">Michael Sperber, R. Kent Dybvig, Matthew Flatt, &amp;
+      Anton van Straaten, eds., <cite>Revised<sup>6</sup> Report on the
+      Algorithmic Language Scheme</cite> (R6RS), 2007.
+      <a href="https://r6rs.org">https://r6rs.org</a>.</p>
+
+    <p id="r7rs">Alex Shinn, John Cowan, &amp; Arthur A. Gleckler,
+      eds., <cite>Revised<sup>7</sup> Report on the Algorithmic Language
+      Scheme</cite> (R7RS Small), 2013.
+      <a href="https://small.r7rs.org/">https://small.r7rs.org</a></p>
+
+    <p id="c23"><cite>ISO/IEC 9899:2024. Programming languages —
+      C</cite> (C23). ISO/IEC, 2024.</p>
+
+    <p id="srfi-158">Shiro Kawai, John Cowan, and Thomas Gilray.
+      <cite>SRFI 158: Generators and Accumulators</cite>.
+      <a href="https://srfi.schemers.org/srfi-158/">
+        https://srfi.schemers.org/srfi-158/</a>, 2017.</p>
+
+    <p id="srfi-271">Wolfgang Corcoran-Mathe.
+      <cite>SRFI 271: Random port libraries</cite>.
+      <a href="https://srfi.schemers.org/srfi-271/">
+        https://srfi.schemers.org/srfi-271/</a>, 2026.
+        (draft)</p>
+
+    <h2 id="copyright">Copyright</h2>
+
+    <p>&copy; 2026 Wolfgang Corcoran-Mathe.</p>
+
+    <p>
+      Permission is hereby granted, free of charge, to any person
+      obtaining a copy of this software and associated documentation files
+      (the "Software"), to deal in the Software without restriction,
+      including without limitation the rights to use, copy, modify, merge,
+      publish, distribute, sublicense, and/or sell copies of the Software,
+      and to permit persons to whom the Software is furnished to do so,
+      subject to the following conditions:</p>
+
+    <p>
+      The above copyright notice and this permission notice (including the
+      next paragraph) shall be included in all copies or substantial
+      portions of the Software.</p>
+
+    <p>
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+      EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+      MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+      NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+      BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+      ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+      CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+      SOFTWARE.</p>
+
+    <hr>
+    <address>Editor: <a href="mailto:srfi-editors+at+srfi+dot+schemers+dot+org">Arthur A. Gleckler</a></address>
+  </body>
+</html>
