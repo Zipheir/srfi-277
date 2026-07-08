@@ -40,21 +40,25 @@ SPDX-License-Identifier: MIT
       or more bytes or characters is needed.</p>
 
     <h2 id="toc">Table of contents</h2>
-
-    <ol>
-      <li><a href="#rationale">Rationale</a></li>
+    <ul>
+      <li>
+        <a href="#rationale">Rationale</a>
+        <ul>
+          <li><a href="#why-not-cyclic-generators">Why not cyclic generators?</a></li>
+        </ul>
+      </li>
       <li>
         <a href="#specification">Specification</a>
-        <ol type="a">
+        <ul>
           <li><a href="#procedures">Procedures</a></li>
           <li><a href="#examples">Examples</a></li>
-        </ol>
+        </ul>
       </li>
       <li><a href="#implementation">Implementation</a></li>
       <li><a href="#acknowledgements">Acknowledgements</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#copyright">Copyright</a></li>
-    </ol>
+    </ul>
 
     <h2 id="issues">Issues</h2>
 
@@ -90,7 +94,7 @@ SPDX-License-Identifier: MIT
       emulated portably by <code>(open-cyclic-input-bytevector
       #u8(0))</code>.
 
-    <h3>Why not cyclic generators?</h3>
+    <h3 id="why-not-cyclic-generators">Why not cyclic generators?</h3>
 
     <p><a href="#srfi-158">SRFI 158</a> provides
       <code>circular-generator</code>, which
