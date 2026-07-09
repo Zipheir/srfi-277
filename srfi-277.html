@@ -141,7 +141,9 @@ SPDX-License-Identifier: MIT
 
       <p>Reading from the returned port must not produce
         an EOF object.  If <var>string</var> is empty, then the behavior
-        is undefined.</p>
+        is undefined.  If <var>string</var> is modified after
+        <code>open-cyclic-input-string</code> has been called, the
+        behavior is undefined.</p>
     </div>
 
     <div class="proc-spec">
@@ -159,7 +161,9 @@ SPDX-License-Identifier: MIT
 
       <p>Reading from the returned port must not produce
         an EOF object.  If <var>bytevector</var> is empty, then the
-        behavior is undefined.</p>
+        behavior is undefined.  If <var>bytevector</var> is modified
+        after <code>open-cyclic-input-bytevector</code> has been called,
+        the behavior is undefined.</p>
     </div>
 
     <h3 id="examples">Examples</h3>
