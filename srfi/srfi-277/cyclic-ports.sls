@@ -17,18 +17,17 @@
       (assertion-violation 'open-cyclic-input-bytevector
                            "argument must be a non-empty bytevector"
                            vec))
-    (let ((table (bytevector-copy vec))
-          (len (bytevector-length vec))
+    (let ((len (bytevector-length vec))
           (pos 0))
       (make-custom-binary-input-port
        "cyclic bytevector port"
        (lambda (buf start count) ; read!
          (do ((i 0 (+ i 1)) ; index into buf
-              (j pos (+ j 1))) ; index into table
+              (j pos (+ j 1))) ; index into vec
              ((= i count)
               (set! pos j)
               count)
-           (let ((b (bytevector-u8-ref table (mod j len))))
+           (let ((b (bytevector-u8-ref vec (mod j len))))
              (bytevector-u8-set! buf (+ i start) b))))
        (lambda () pos)  ; get-position
        (lambda (new) (set! pos new))  ; set-position!
