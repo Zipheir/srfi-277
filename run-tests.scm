@@ -3,7 +3,7 @@
 (import (rnrs base)
         (rnrs io ports)
         (srfi :64)
-        (srfi srfi-NNN)
+        (srfi srfi-277)
         )
 
 ;;; Test runner
