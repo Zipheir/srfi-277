@@ -112,9 +112,9 @@ SPDX-License-Identifier: MIT
 
     <h2 id="specification">Specification</h2>
 
-    <p>The terms “must”, “may”, etc. should be interpreted according
-      to <a href="#rfc2119">RFC 2119</a>.  In this SRFI they are
-      written with <strong>strong emphasis</strong>.</p>
+    <p>The terms “must”, “may”, etc., though not capitalized in this
+      document, should be interpreted according
+      to <a href="#rfc2119">RFC 2119</a>.</p>
 
     <p>The phrase “the behavior is undefined” is used in the sense
       given it in the ISO C programming-language standards (see e.g.
@@ -134,12 +134,12 @@ SPDX-License-Identifier: MIT
         from <var>string</var> in order, repeatedly, forever.
         More precisely, if <var>string</var> consists of the characters
         <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, then the
-        returned port <strong>shall</strong> produce the conceptually
+        returned port shall produce the conceptually
         infinite sequence
         <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>,
         <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, ….</p>
 
-      <p>Reading from the returned port <strong>must not</strong> produce
+      <p>Reading from the returned port must not produce
         an EOF object.  If <var>string</var> is empty, then the behavior
         is undefined.</p>
     </div>
@@ -152,12 +152,12 @@ SPDX-License-Identifier: MIT
         <var>bytevector</var> in order, repeatedly, forever.
         More precisely, if <var>bytevector</var> consists of the
         numbers <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
-        then the returned port <strong>shall</strong> produce the
+        then the returned port shall produce the
         conceptually infinite sequence
         <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
         <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>, ….</p>
 
-      <p>Reading from the returned port <strong>must not</strong> produce
+      <p>Reading from the returned port must not produce
         an EOF object.  If <var>bytevector</var> is empty, then the
         behavior is undefined.</p>
     </div>
