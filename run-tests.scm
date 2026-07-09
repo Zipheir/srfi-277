@@ -1,7 +1,9 @@
 ;;; SPDX-FileCopyrightText: 2026 Wolfgang Corcoran-Mathe
 ;;; SPDX-License-Identifier: MIT
 (import (rnrs base)
+        (rnrs bytevectors)
         (rnrs io ports)
+        (rnrs mutable-strings)
         (srfi :64)
         (srfi srfi-277)
         )
@@ -74,5 +76,21 @@
   (call-with-port (open-cyclic-input-string "abc")
                   (lambda (p)
                     (get-string-n p 8))))
+
+(test-equal "arg. mutation doesn't change binary cyclic port output"
+  '#vu8(1 2 3 1 2 3 1 2)
+  (let ((vec (bytevector 1 2 3)))
+    (call-with-port (open-cyclic-input-bytevector vec)
+                    (lambda (p)
+                      (bytevector-u8-set! vec 0 42)
+                      (get-bytevector-n p 8)))))
+
+(test-equal "arg. mutation doesn't change textual cyclic port output"
+  "abcabcab"
+  (let ((s (string-copy "abc")))
+    (call-with-port (open-cyclic-input-string s)
+                    (lambda (p)
+                      (string-set! s 0 #\z)
+                      (get-string-n p 8)))))
 
 (test-end)
