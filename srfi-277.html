@@ -124,23 +124,34 @@ SPDX-License-Identifier: MIT
       implementation-defined extension, or failing
       catastrophically.</p>
 
+    <h3 id="definitions">Definitions</h3>
+
+    <p>A <dfn>cyclic port</dfn> is an input port that produces a given
+      sequence in order, repeatedly, forever.  More precisely, a cyclic
+      port associated with the byte or character sequence
+      <var>x<sub>0</sub></var>, …, <var>x<sub>n</sub></var> shall
+      produce the conceptually infinite sequence
+      <var>x<sub>0</sub></var>, …, <var>x<sub>n</sub></var>,
+      <var>x<sub>0</sub></var>, …, <var>x<sub>n</sub></var>, ….
+      Reading from a cyclic port shall not produce an end-of-file
+      object.</p>
+
+    <p>Cyclic ports shall support port positioning if the underlying
+      Scheme implementation supports it.  If cyclic ports are
+      positionable, they should follow the positioning semantics
+      described in
+      <a href="https://srfi.schemers.org/srfi-192/">SRFI 192</a> and
+      in the R<sup>6</sup>RS.</p>
+
     <h3 id="procedures">Procedures</h3>
 
     <div class="proc-spec">
       <p><code>(open-cyclic-input-string <var>string</var>)</code> →
         textual-input-port</p>
 
-      <p>Returns a new textual input port that delivers characters
-        from <var>string</var> in order, repeatedly, forever.
-        More precisely, if <var>string</var> consists of the characters
-        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, then the
-        returned port shall produce the conceptually
-        infinite sequence
-        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>,
-        <var>c<sub>0</sub></var>, …, <var>c<sub>n</sub></var>, ….</p>
-
-      <p>Reading from the returned port must not produce
-        an EOF object.  If <var>string</var> is empty, then the behavior
+      <p>Returns a new textual cyclic input port that delivers
+        characters from <var>string</var>.
+        If <var>string</var> is empty, then the behavior
         is undefined.  If <var>string</var> is modified after
         <code>open-cyclic-input-string</code> has been called, the
         behavior is undefined.</p>
@@ -151,16 +162,8 @@ SPDX-License-Identifier: MIT
         <var>bytevector</var>)</code> → binary-input-port</p>
 
       <p>Returns a new binary cyclic port that delivers bytes from
-        <var>bytevector</var> in order, repeatedly, forever.
-        More precisely, if <var>bytevector</var> consists of the
-        numbers <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
-        then the returned port shall produce the
-        conceptually infinite sequence
-        <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>,
-        <var>b<sub>0</sub></var>, …, <var>b<sub>n</sub></var>, ….</p>
-
-      <p>Reading from the returned port must not produce
-        an EOF object.  If <var>bytevector</var> is empty, then the
+        <var>bytevector</var>.
+        If <var>bytevector</var> is empty, then the
         behavior is undefined.  If <var>bytevector</var> is modified
         after <code>open-cyclic-input-bytevector</code> has been called,
         the behavior is undefined.</p>
@@ -219,6 +222,11 @@ SPDX-License-Identifier: MIT
       <cite>SRFI 158: Generators and Accumulators</cite>.
       <a href="https://srfi.schemers.org/srfi-158/">
         https://srfi.schemers.org/srfi-158/</a>, 2017.</p>
+
+    <p id="srfi-192">John Cowan &amp; Shiro Kawai.
+      <cite>SRFI 192: Port Positioning</cite>.
+      <a href="https://srfi.schemers.org/srfi-192/">
+        https://srfi.schemers.org/srfi-192/</a>, 2020.</p>
 
     <p id="srfi-271">Wolfgang Corcoran-Mathe.
       <cite>SRFI 271: Random port libraries</cite>.
