@@ -2,6 +2,7 @@
 ;;; SPDX-License-Identifier: MIT
 (import (rnrs base)
         (rnrs io ports)
+        (rnrs programs)
         (srfi :64)
         (srfi srfi-277)
         )
@@ -25,9 +26,9 @@
           (display "FAIL: ")
           (display (test-runner-test-name runner))
           (display ". Expected ")
-          (display (test-result-ref runner 'expected-value))
+          (write (test-result-ref runner 'expected-value))
           (display ", got ")
-          (display (test-result-ref runner 'actual-value))
+          (write (test-result-ref runner 'actual-value))
           (display ".\n")))))
     (test-final
      (lambda (runner)
@@ -40,7 +41,8 @@
        (newline)
        (display "Total skips: ")
        (display (test-runner-skip-count runner))
-       (newline))))
+       (newline)
+       (exit (test-runner-fail-count runner)))))
 
     (test-runner-on-test-end! runner test-end)
     (test-runner-on-final! runner test-final)
